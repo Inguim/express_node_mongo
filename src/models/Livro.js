@@ -7,7 +7,8 @@ const livroSchema = new moongose.Schema({
     editora: { type: String },
     preco: { type: Number },
     paginas: { type: Number },
-    autor: autorSchema
+    autor: autorSchema // abordagem utilizando embedding
+    // autor: {type: mongoose.Schema.Types.ObjectId, ref: 'autores', required: true}, // abordagem utilizando referencing
 }, { versionKey: false });
 
 
