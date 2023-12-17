@@ -8,7 +8,7 @@ class LivroController {
     try {
       Object.keys(filters).map(key => {
         if(!filters[key]) delete filters[key];
-      })
+      });
       const listaLivros = await livro.find({ ...filters });
       // const listaLivros = await livro.find({}).populate("autor").exec(); // abordagem utilizando referencing
       res.status(200).json(listaLivros);
@@ -53,7 +53,7 @@ class LivroController {
       if (autorId) {
         // abordagem utilizando embedding
         const autorData = await autor.findById(autorId);
-        data = { ...data, autor: { ...autorData._doc } }
+        data = { ...data, autor: { ...autorData._doc } };
       }
       const id = req.params.id;
       await livro.findByIdAndUpdate(id, data);
@@ -69,7 +69,7 @@ class LivroController {
     try {
       const id = req.params.id;
       await livro.findByIdAndDelete(id);
-      res.status(200).json({ message: "Excluido com sucesso" });;
+      res.status(200).json({ message: "Excluido com sucesso" });
     } catch (error) {
       res
         .status(500)

@@ -1,9 +1,9 @@
 import moongose from "mongoose";
 
 const autorSchema = new moongose.Schema({
-    id: { type: moongose.Schema.Types.ObjectId },
-    nome: { type: String, required: true },
-    nacionalidade: { type: String },
+  id: { type: moongose.Schema.Types.ObjectId },
+  nome: { type: String, required: true },
+  nacionalidade: { type: String },
 }, { versionKey: false });
 
 
