@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import express from "express";
 import conectaNaDatabase from "./config/dbConnect.js";
 import routes from "./routes/index.js";
+import errorHandling from "./middlewares/errorHandling.js";
 
 
 const conexao = await conectaNaDatabase();
@@ -15,5 +17,6 @@ conexao.once("open", () => {
 
 const app = express();
 routes(app);
+app.use(errorHandling);
 
 export default app;

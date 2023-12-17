@@ -1,20 +1,16 @@
 import { autor } from "../models/Autor.js";
-import moongose from "mongoose";
 
 class AutorController {
-  static async list(req, res) {
+  static async list(req, res, next) {
     try {
       const listaAutores = await autor.find({});
       res.status(200).json(listaAutores);
     } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .json({ message: "Falha na requisição" });
+      next(error);
     }
   }
 
-  static async find(req, res) {
+  static async find(req, res, next) {
     try {
       const id = req.params.id;
       const data = await autor.findById(id);
@@ -23,48 +19,36 @@ class AutorController {
       }
       return res.status(200).json(data);
     } catch (error) {
-      if (error instanceof moongose.Error.CastError) {
-        return res
-          .status(400)
-          .json({ message: "Um ou mais dados fornecidos estão incorretos" });
-      } 
-      console.log(error);
-      return res
-        .status(500)
-        .json({ message: "Falha na requisição" });
+      next(error);
     }
   }
 
-  static async create(req, res) {
+  static async create(req, res, next) {
     try {
       const novoAutor = await autor.create(req.body);
       res.status(201).json({ message: "Criado com sucesso", livro: novoAutor });
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Falha na inclusão` });
+      next(error);
     }
   }
 
-  static async update(req, res) {
+  static async update(req, res, next) {
     try {
       const id = req.params.id;
       await autor.findByIdAndUpdate(id, req.body);
       res.status(200).json({ message: "Atualizado com sucesso" });
     } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .json({ message: "Falha na atualização" });
+      next(error);
     }
   }
 
-  static async delete(req, res) {
+  static async delete(req, res, next) {
     try {
       const id = req.params.id;
       await autor.findByIdAndDelete(id);
       res.status(200).json({ message: "Excluido com sucesso" });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Falha na exclusão" });
+      next(error);
     }
   }
 }
