@@ -3,8 +3,13 @@ import livro from "../models/Livro.js";
 
 class LivroController {
   static async list(req, res) {
+    const { editora } = req.query;
+    let filters = { editora };
     try {
-      const listaLivros = await livro.find({});
+      Object.keys(filters).map(key => {
+        if(!filters[key]) delete filters[key];
+      })
+      const listaLivros = await livro.find({ ...filters });
       res.status(200).json(listaLivros);
     } catch (error) {
       res
