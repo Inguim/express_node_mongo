@@ -1,3 +1,4 @@
+import { autor } from "../models/Autor.js";
 import livro from "../models/Livro.js";
 
 class LivroController {
@@ -25,8 +26,11 @@ class LivroController {
   }
 
   static async create(req, res) {
+    const body = req.body;
     try {
-      const novoLivro = await livro.create(req.body);
+      const autorData = await autor.findById(body.autor);
+      const data = { ...body, autor: { ...autorData._doc } };
+      const novoLivro = await livro.create(data);
       res.status(201).json({ message: "Criado com sucesso", livro: novoLivro });
     } catch (error) {
       res
@@ -36,9 +40,15 @@ class LivroController {
   }
 
   static async update(req, res) {
+    const { autor: autorId, ...livroBody } = req.body;
+    let data = { ...livroBody };
     try {
+      if (autorId) {
+        const autorData = await autor.findById(autorId);
+        data = { ...data, autor: { ...autorData._doc } }
+      }
       const id = req.params.id;
-      await livro.findByIdAndUpdate(id, req.body);
+      await livro.findByIdAndUpdate(id, data);
       res.status(200).json({ message: "Atualizado com sucesso" });
     } catch (error) {
       res
