@@ -3,6 +3,7 @@ import express from "express";
 import conectaNaDatabase from "./config/dbConnect.js";
 import routes from "./routes/index.js";
 import errorHandling from "./middlewares/errorHandling.js";
+import errorHandling404 from "./middlewares/errorHandling404.js";
 
 
 const conexao = await conectaNaDatabase();
@@ -17,6 +18,9 @@ conexao.once("open", () => {
 
 const app = express();
 routes(app);
+
+app.use(errorHandling404);
+
 app.use(errorHandling);
 
 export default app;

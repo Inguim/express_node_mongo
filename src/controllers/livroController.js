@@ -1,3 +1,4 @@
+import NotFound from "../erros/NotFound.js";
 import { autor } from "../models/Autor.js";
 import livro from "../models/Livro.js";
 
@@ -21,6 +22,7 @@ class LivroController {
     try {
       const id = req.params.id;
       const data = await livro.findById(id);
+      if (!data) next(new NotFound("Id livro não localizado"));
       res.status(200).json(data);
     } catch (error) {
       next(error);
@@ -47,6 +49,7 @@ class LivroController {
       if (autorId) {
         // abordagem utilizando embedding
         const autorData = await autor.findById(autorId);
+        if (!autorData) next(new NotFound("Id autor não localizado"));
         data = { ...data, autor: { ...autorData._doc } };
       }
       const id = req.params.id;
