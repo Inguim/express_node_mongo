@@ -31,7 +31,7 @@ class LivroController {
     const body = req.body;
     try {
       const autorData = await autor.findById(body.autor); // abordagem utilizando embedding
-      const data = { ...body, autor: { ...autorData._doc } }; // abordagem utilizando embedding
+      const data = { ...body, autor: autorData ? { ...autorData._doc } : null }; // abordagem utilizando embedding
       const novoLivro = await livro.create(data); // abordagem utilizando referencing
       res.status(201).json({ message: "Criado com sucesso", livro: novoLivro });
     } catch (error) {
