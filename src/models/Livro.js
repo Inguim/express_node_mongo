@@ -34,4 +34,4 @@ const livroSchema = new moongose.Schema(
 
 const livro = moongose.model("livros", livroSchema);
 
-export default livro;
+export { livro, livroSchema };
