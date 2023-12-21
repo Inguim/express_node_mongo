@@ -3,11 +3,12 @@ import { livro, autor } from "../models/index.js";
 
 class LivroController {
   static async list(req, res, next) {
-    const { editora } = req.query;
-    let filters = { editora };
+    const { editora, titulo } = req.query;
+    let filters = { editora, titulo };
     try {
       Object.keys(filters).map(key => {
-        if(!filters[key]) delete filters[key];
+        if(!filters[key]) return delete filters[key];
+        if(key === "titulo") return filters[key] = { $regex: filters[key], $options: "i" };
       });
       const listaLivros = await livro.find({ ...filters });
       // const listaLivros = await livro.find({}).populate("autor").exec(); // abordagem utilizando referencing
