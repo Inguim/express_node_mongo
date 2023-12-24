@@ -3,14 +3,11 @@ import { livro, autor } from "../models/index.js";
 
 class LivroController {
   static async list(req, res, next) {
-    const { editora, titulo } = req.query;
-    let filters = { editora, titulo };
+    const { editora, titulo, paginasLte, paginasGte, autorNome } = req.query;
+    let filters = { editora, titulo, paginasLte, paginasGte, autorNome };
+    filters = await filter(filters);
     try {
-      Object.keys(filters).map(key => {
-        if(!filters[key]) return delete filters[key];
-        if(key === "titulo") return filters[key] = { $regex: filters[key], $options: "i" };
-      });
-      const listaLivros = await livro.find({ ...filters });
+      const listaLivros = await livro.find(filters);
       // const listaLivros = await livro.find({}).populate("autor").exec(); // abordagem utilizando referencing
       res.status(200).json(listaLivros);
     } catch (error) {
@@ -72,3 +69,17 @@ class LivroController {
 }
 
 export default LivroController;
+
+async function filter(queryParams = {}) {
+  const { editora, titulo, paginasLte, paginasGte, autorNome } = queryParams;
+  let filters = {};
+  if (editora) filters.editora = editora;
+  if (titulo) filters.titulo = { $regex: titulo, $options: "i" };
+  if (paginasLte || paginasGte) {
+    filters.paginas = {};
+    if (paginasLte) filters.paginas.$lte = paginasLte;  
+    if (paginasGte) filters.paginas.$gte = paginasGte; 
+  }
+  if (autorNome) filters["autor.nome"] = { $regex: autorNome, $options: "i" };
+  return filters;
+}
