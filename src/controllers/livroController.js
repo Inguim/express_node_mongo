@@ -1,13 +1,18 @@
+import InvalidRequestError from "../erros/InvalidRequestError.js";
 import NotFound from "../erros/NotFound.js";
 import { livro, autor } from "../models/index.js";
 
 class LivroController {
   static async list(req, res, next) {
     const { editora, titulo, paginasLte, paginasGte, autorNome } = req.query;
+    let { limit = 1, page = 1 } = req.query;
     let filters = { editora, titulo, paginasLte, paginasGte, autorNome };
     filters = await filter(filters);
     try {
-      const listaLivros = await livro.find(filters);
+      limit = parseInt(limit);
+      page = parseInt(page);
+      if((limit < 0 || isNaN(limit)) || (page < 0 || isNaN(page))) throw new InvalidRequestError("Os valores de 'limit' e 'page' devem ser maiores que 0");
+      const listaLivros = await livro.find(filters).skip((page-1) * limit).limit(limit);
       // const listaLivros = await livro.find({}).populate("autor").exec(); // abordagem utilizando referencing
       res.status(200).json(listaLivros);
     } catch (error) {
